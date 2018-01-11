@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Game click the box</title>
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+</head>
+<body>
+
+	<div class="container text-center">
+		<div class="jumbotron">
+			<h1 class="display-4">Game click the box</h1>
+			<button class="btn btn-secondary btn-lg" onclick="startgame()" id="start">Start</button>
+			<h1 id="waktugame"></h1>
+			<h1 id="waktusoal"></h3>
+				<canvas id="myCanvas" width="800" height="300" style="border:1px solid #000000; display:none"></canvas>
+				<h1 id="score"></h1>
+				<button class="btn btn-secondary btn-lg" id="retry" style="display:none" onclick="startgame()">Retry</button>
+			</div>
+		</div>
+
+	</body>
+	</html>
+	<script type="text/javascript">
+		var waktugame = 60;
+		var waktusoal = 2;
+		var game;
+		var gamesoal;
+		var tertekan = false;
+		var score = 0;
+		var x, y;
+		var width, height;
+
+		function init() {
+			waktugame = 60;
+			waktusoal = 2;
+			tertekan = false;
+			score = 0;
+		}
+
+		function startgame() {
+			init();
+			document.getElementById("score").innerHTML = "";
+			document.getElementById("start").style.display = "none";
+			document.getElementById("myCanvas").style.display = "inline";
+			document.getElementById("retry").style.display = "none";
+
+			document.getElementById("myCanvas").addEventListener("click", cek, false);
+
+			game = setInterval(countdowngame, 1000);
+			gamesoal = setInterval(countdowngamesoal, 300);
+		}
+
+		function getRandomColor() {
+			var letters = '0123456789ABCDEF';
+			var color = '#';
+			for (var i = 0; i < 6; i++) {
+				color += letters[Math.floor(Math.random() * 16)];
+			}
+			return color;
+		}
+
+		function generate() {
+			tertekan = false;
+
+			var c = document.getElementById("myCanvas");
+			var ctx = c.getContext("2d");
+			ctx.clearRect(0, 0, c.width, c.height);
+
+			width = Math.floor(Math.random() * 11) + 10;
+			height = Math.floor(Math.random() * 11) + 10;
+
+			x = Math.floor(Math.random() * (c.width + 1)) - width;
+			y = Math.floor(Math.random() * (c.height + 1)) - height;
+
+			if (x < 0) x += width;
+			if (y < 0) y += height;
+
+			ctx.beginPath();
+			ctx.rect(x, y, width, height);
+			ctx.fillStyle = getRandomColor();
+			ctx.fill();
+		}
+
+		function cek(e) {
+			if (document.getElementById("myCanvas").style.display == 'none' || tertekan || waktugame < 0) return;
+
+			tertekan = true;
+
+			var xx;
+			var yy;
+			if (e.pageX || e.pageY) { 
+				xx = e.pageX;
+				yy = e.pageY;
+			}
+			else { 
+				xx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+				yy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+			} 
+			xx -= document.getElementById("myCanvas").offsetLeft;
+			yy -= document.getElementById("myCanvas").offsetTop;
+
+
+
+			if (x <= xx && xx <= x + width && y <= yy && yy <= y + height) {
+				score += 100;
+			}
+			else score -= 100;
+
+			document.getElementById("score").innerHTML = "Score : " + score;
+
+			clearInterval(gamesoal);
+			waktusoal = 2;
+			gamesoal = setInterval(countdowngamesoal, 300);
+		}
+
+		function countdowngame() {
+			document.getElementById("waktugame").innerHTML = Math.floor(waktugame / 60).toString() + " m " + (waktugame % 60).toString() + " s";
+			--waktugame;
+
+			if (waktugame < 0) {
+				clearInterval(game);
+				clearInterval(gamesoal);
+				document.getElementById("retry").style.display = "inline";
+			}
+		}
+
+		function countdowngamesoal() {
+			document.getElementById("waktusoal").innerHTML = (waktusoal % 60).toString() + " s";
+
+			if (waktusoal == 2) {
+				generate();
+			}
+
+			--waktusoal;
+
+			if (waktusoal < 0) {
+				clearInterval(gamesoal);
+				waktusoal = 2;
+				gamesoal = setInterval(countdowngamesoal, 300);
+			}
+		}
+
+	</script>

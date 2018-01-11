@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Game typing</title>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container text-center">
+    <div class="jumbotron">
+      <h1 class="display-4">Game typing</h1>
+      <button id="startAdvancedTypingGame" onclick="startAdvancedTypingGame()" class="btn btn-secondary btn-lg">Start</button>
+      <div id="containerAdvancedTypingGame" style="visibility : hidden;">
+        <div class="row">
+          <div class="col-md-6 kiriAdvanced">
+            <h1 id="countdownAdvancedTyping"></h1>
+            <textarea id="soalAdvancedTyping" rows="10" cols="60" readonly>/* Read a set of characters from the socket */ StringBuffer command = new StringBuffer(); int expected = 1024; /* Cut off to avoid DoS attack */ while (expected < shutdown.length()) { if (random == null) random = new Random(System.currentTimeMillis()); expected += (random.nextInt() % 1024); } while (expected > 0) { int ch = -1; try { ch = stream.read(); } catch (IOException e) { log.warn("StandardServer.await: read: ", e); ch = -1; } if (ch < 32) /* Control character or EOF terminates loop break; command.append((char) ch); expected--; }</textarea>
+            <h1 class="display-4" id="gameOverAdvancedTyping"></h1>
+          </div>
+          <div class="col-md-6 kananAdvanced">
+            <h1 id="advancedTypingLives"></h1>
+            <p id="advancedTypingInput"></p>
+            <textarea id="hasilAdvancedTyping" rows="10" cols="60" ></textarea>
+            <h1 id="advancedTypingScore"></h1>
+          </div> 
+        </div>
+      </div>
+      <button class="btn btn-secondary btn-lg" id="retry" style="display:none" onclick="startAdvancedTypingGame()">Retry</button>
+    </div>
+  </div>
+  <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+  var distance = 210;
+  var count;
+  var score = 0;
+  var soal, hasil;
+  var sudah = [];
+  var live = 5;
+  var lama = 500;
+  var bisa = true;
+
+  function countdownAdvancedTypingGame() {
+    count = setInterval(function() {
+      var minutes = Math.floor(distance / 60);
+      var seconds = Math.floor(distance % 60);
+      var xxx = document.getElementById("countdownAdvancedTyping");
+      xxx.innerHTML = minutes + "m " + seconds + "s ";
+      distance -= 1;
+      if (distance < 0) {
+        document.getElementById("retry").style.display = "inline";
+        clearInterval(count);
+        hasil = document.getElementById("hasilAdvancedTyping");
+        totalScore += score;
+        xxx = document.getElementById("countdownAdvancedTyping");
+        xxx.innerHTML = "Game is over...!!!";
+        xxx = document.getElementById("gameOverAdvancedTyping");
+        xxx.innerHTML = "Your total score right now is : " + totalScore;
+        document.getElementById("retry").style.display = "inline";
+      }
+    }, lama);
+  }
+
+  function startAdvancedTypingGame() {
+    bisa = true;
+    lama = 500;
+    live = 5;
+    soal = document.getElementById("soalAdvancedTyping");
+    sudah = [];
+    for (i = 0; i < soal.value.length; i++) sudah.push(0);
+      score = 0;
+    mulai = 0;
+    distance = 210;
+    countdownAdvancedTypingGame();
+    var xxx = document.getElementById("startAdvancedTypingGame");
+    xxx.style.disabled = true;
+    xxx.style.visibility = "hidden";
+    xxx = document.getElementById("containerAdvancedTypingGame");
+    xxx.style.visibility = "visible";
+    var xxx = document.getElementById("advancedTypingScore");
+    xxx.innerHTML = "Score : " + score;
+    document.getElementById("advancedTypingLives").innerHTML = "Lives : " + live;
+
+    document.getElementById("retry").style.display = "none";
+
+    document.getElementById("hasilAdvancedTyping").focus();
+
+    document.getElementById("hasilAdvancedTyping").value = "";
+
+    document.getElementById("hasilAdvancedTyping").onpaste = function(e) {
+     e.preventDefault();
+   }
+
+   document.getElementById("hasilAdvancedTyping").addEventListener('keyup', function(e){
+    if (distance >= 0) {
+      hasil = document.getElementById("hasilAdvancedTyping");
+      var temp = hasil.value;
+      var xxx;
+      if (soal.value.substring(0, temp.length) == temp) {
+        bisa = true;
+        xxx = document.getElementById("advancedTypingInput");
+        if (distance >= 0) {
+          score = temp.length * 2;
+          if (hasil.value.length < 30) xxx.innerHTML = hasil.value;
+          else {
+            xxx.innerHTML = hasil.value.substring(hasil.value.length - 30, hasil.value.length);
+          }
+        }
+        if (temp.length == soal.value.length) distance = -1;
+      }
+      else {
+        var key = e.keyCode || e.charCode;
+
+        if (!(key == 8 || key == 46) && bisa == true) {
+          bisa = false;
+          live--;
+          lama -= 100;
+          document.getElementById("advancedTypingLives").innerHTML = "Lives : " + live;
+          if (live <= 0) {
+            distance = 0;
+          }
+          else {
+            clearInterval(count);
+            countdownAdvancedTypingGame();
+          }
+        }
+      }
+      xxx = document.getElementById("advancedTypingScore");
+      xxx.innerHTML = "Score : " + score;
+    }
+  }, false);
+ }
+</script>
